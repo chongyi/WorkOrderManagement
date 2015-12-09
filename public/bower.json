@@ -1,0 +1,18 @@
+{
+    "name": "public",
+    "authors": [
+        "chongyi <xpz3847878@163.com>"
+    ],
+    "license": "MIT",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "bower_components",
+        "assets/dep/",
+        "test",
+        "tests"
+    ],
+    "dependencies": {
+        "amazeui": "latest"
+    }
+}

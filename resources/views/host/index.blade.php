@@ -1,0 +1,1 @@
+@extends('host.common')
