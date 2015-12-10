@@ -14,8 +14,15 @@ Route::group(['middleware' => 'auth', 'namespace' => 'Web'], function () {
 
     Route::resource('group.work-orders', 'Work\GroupWorkOrderController', [
         'names' => [
-            'index' => 'host.work.group.work-order.index',
-            'create' => 'host.work.group.work-order.create'
+            'index'  => 'host.work.group.work-order.index',
+            'create' => 'host.work.group.work-order.create',
+        ]
+    ]);
+
+    Route::resource('work-order', 'Work\WorkOrderController', [
+        'names' => [
+            'index' => 'host.work.work-order.index',
+            'show'  => 'host.work.work-order.show',
         ]
     ]);
 

@@ -67,10 +67,10 @@
     </div>
 </header>
 <div class="am-container">
-    @if(Session::has('group.create-success'))
+    @if(Session::has('create-success'))
         <div class="am-alert am-alert-success" data-am-alert>
             <button type="button" class="am-close">&times;</button>
-            <p>工作组添加成功</p>
+            <p>{{ trans('common.create-success.' . Session::get('create-success')) }}</p>
         </div>
     @endif
     @yield('body')

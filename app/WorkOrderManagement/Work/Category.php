@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
+    protected $fillable = ['display_name', 'description'];
+
     /**
      * 该分类下的工单
      *

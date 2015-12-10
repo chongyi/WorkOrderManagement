@@ -95,14 +95,15 @@ class GroupController extends Controller
             return redirect()->back()->withErrors($validator->errors());
         }
 
-        $group = new Group();
-        $group->display_name = $request->input('display_name');
-        $group->description = $request->input('description', '');
+        return \DB::transaction(function() use ($request) {
+            $group = new Group();
+            $group->display_name = $request->input('display_name');
+            $group->description = $request->input('description', '');
 
-        $group->save();
-        $group->creator()->associate(\Auth::user());
-
-        return redirect()->route('host.work.group.show', [$group->id])->with('group.create-success', true);
+            $group->save();
+            $group->creator()->associate(\Auth::user());
+            return redirect()->route('host.work.group.show', [$group->id])->with('create-success', 'group');
+        });
     }
 
     /**
@@ -153,7 +154,7 @@ class GroupController extends Controller
 
         $group->save();
 
-        return redirect()->back()->with('group.update-success', true);
+        return redirect()->back()->with('update-success', 'group');
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\WorkOrderManagement\Work\WorkOrder;
+use App\WorkOrderManagement\Work\WorkOrderObserver;
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -28,6 +30,6 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot($events);
 
-        //
+        WorkOrder::observe(WorkOrderObserver::class);
     }
 }

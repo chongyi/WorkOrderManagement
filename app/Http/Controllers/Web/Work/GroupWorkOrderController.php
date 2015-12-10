@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Web\Work;
 
+use App\Http\Controllers\Web\BaseDataBootstrap;
+use App\WorkOrderManagement\Work\Category;
 use App\WorkOrderManagement\Work\Group;
+use App\WorkOrderManagement\Work\WorkOrder;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -10,6 +13,8 @@ use App\Http\Controllers\Controller;
 
 class GroupWorkOrderController extends Controller
 {
+    use BaseDataBootstrap;
+
     /**
      * Display a listing of the resource.
      *
@@ -70,7 +75,9 @@ class GroupWorkOrderController extends Controller
      */
     public function create($groupId)
     {
-        return view('host.work.work-order.create')->with('enableGroup', Group::findOrFail($groupId));
+        return view('host.work.group.work-order.create')
+            ->with('enableGroup', Group::findOrFail($groupId))
+            ->with('categories', Category::all());
     }
 
     /**
@@ -80,9 +87,37 @@ class GroupWorkOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $groupId)
     {
-        //
+        $validator = \Validator::make($request->all(), [
+            'subject'     => 'required',
+            'sort'        => 'required|numeric|min:0|max:5',
+            'content'     => 'required',
+            'category_id' => 'required|exists:categories,id'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        }
+
+        return \DB::transaction(function () use ($request, $groupId) {
+            $group     = Group::findOrFail($groupId);
+            $category  = Category::findOrFail($request->input('category_id'));
+            $workOrder = new WorkOrder();
+
+            $workOrder->subject = $request->input('subject');
+            $workOrder->sort    = $request->input('sort');
+
+            $workOrder->category()->associate($category);
+            $workOrder->group()->associate($group);
+            $workOrder->publisher()->associate(\Auth::user());
+
+            $workOrder->save();
+
+            return redirect()
+                ->route('host.work.work-order.show', $workOrder->id)
+                ->with('create-success', 'work-order');
+        });
     }
 
     /**

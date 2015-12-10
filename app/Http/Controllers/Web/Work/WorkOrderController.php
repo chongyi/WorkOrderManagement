@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web\Work;
 
+use App\Http\Controllers\Web\BaseDataBootstrap;
 use App\WorkOrderManagement\Work\WorkOrder;
 use Illuminate\Http\Request;
 
@@ -10,6 +11,8 @@ use App\Http\Controllers\Controller;
 
 class WorkOrderController extends Controller
 {
+    use BaseDataBootstrap;
+
     /**
      * Display a listing of the resource.
      *
@@ -98,7 +101,9 @@ class WorkOrderController extends Controller
      */
     public function show($id)
     {
-        //
+        $workOrder = WorkOrder::findOrFail($id);
+
+        return view('host.work.work-order.show')->with('enableGroup', $workOrder->group)->with('workOrder', $workOrder);
     }
 
     /**
