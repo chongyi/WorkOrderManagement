@@ -69,4 +69,14 @@ class WorkOrder extends Model
     {
         return $builder->where('display', true);
     }
+
+    /**
+     * 获取该工单的参与者、关注人
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function participants()
+    {
+        return $this->morphToMany(User::class, 'involvement');
+    }
 }

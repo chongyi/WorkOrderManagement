@@ -2,26 +2,22 @@
 
 namespace App\Http\Controllers\Web\Work;
 
-use App\WorkOrderManagement\Work\WorkOrder;
+use App\WorkOrderManagement\Work\Group;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class WorkOrderController extends Controller
+class GroupWorkOrderController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, $groupId)
     {
-        $workOrders = new WorkOrder();
-
-        if ($group = $request->query('group_id')) {
-            $workOrders->where('group_id', $group);
-        }
+        $workOrders = Group::findOrFail($groupId)->workOrders();
 
         if (in_array($status = $request->query('status', -1), [0, 1, 2, 3])) {
             $workOrders->where('status', $status);
@@ -47,7 +43,7 @@ class WorkOrderController extends Controller
                     'publish_time'      => $workOrder->format('Y-m-d H:i:s'),
                     'publish_timestamp' => $workOrder->getTimestamp(),
                     'update_time'       => $workOrder->format('Y-m-d H:i:s'),
-                    'update_timestamp'  => $workOrder->getTimestamp()
+                    'update_timestamp'  => $workOrder->getTimestamp(),
                 ];
             }
 
@@ -72,9 +68,9 @@ class WorkOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($groupId)
     {
-        //
+        return view('host.work.work-order.create')->with('enableGroup', Group::findOrFail($groupId));
     }
 
     /**

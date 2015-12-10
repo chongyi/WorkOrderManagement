@@ -1,0 +1,1 @@
+@extends('host.work.group.edit')

@@ -2,6 +2,7 @@
 
 namespace App\WorkOrderManagement;
 
+use App\WorkOrderManagement\Work\Group;
 use App\WorkOrderManagement\Work\WorkOrder;
 use App\WorkOrderManagement\Work\WorkOrderMessage;
 use Illuminate\Auth\Authenticatable;
@@ -17,6 +18,9 @@ class User extends Model implements AuthenticatableContract,
                                     CanResetPasswordContract
 {
     use Authenticatable, Authorizable, CanResetPassword;
+
+    const INVOLVED_WORK_ORDER = 0;
+    const INVOLVED_GROUP      = 1;
 
     /**
      * The database table used by the model.
@@ -77,5 +81,22 @@ class User extends Model implements AuthenticatableContract,
     public function myWorkOrderMessages()
     {
         return $this->hasMany(WorkOrderMessage::class);
+    }
+
+    /**
+     * 获取参与、关注的工作内容对象（工单或工作组）
+     *
+     * @param int $object
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\MorphToMany
+     */
+    public function involvements($object = 0)
+    {
+        $objects = [
+            WorkOrder::class,
+            Group::class,
+        ];
+
+        return $this->morphedByMany($objects[$object], 'involvement');
     }
 }

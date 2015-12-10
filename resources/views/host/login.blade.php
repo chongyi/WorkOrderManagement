@@ -32,7 +32,7 @@
             @endforeach
         @endif
 
-        @if(Session::get('register.success'))
+        @if(Session::has('register.success'))
             <div class="am-alert am-alert-success" data-am-alert>
                 <button type="button" class="am-close">&times;</button>
                 <p>注册成功！赶快登录吧！</p>

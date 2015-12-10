@@ -10,8 +10,12 @@ use App\Http\Controllers\Controller;
 
 class HostController extends Controller
 {
+    use BaseDataBootstrap;
+
     public function __construct()
     {
+        parent::__construct();
+
         $this->middleware('auth');
     }
 
@@ -49,7 +53,7 @@ class HostController extends Controller
 
         $user->save();
 
-        return redirect()->route('host.login')->with('register.success', 'register.success');
+        return redirect()->route('host.login')->with('register.success', true);
     }
 
     public function postLogin(Request $request)

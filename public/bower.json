@@ -13,6 +13,7 @@
         "tests"
     ],
     "dependencies": {
-        "amazeui": "latest"
+        "amazeui": "latest",
+        "mustache": "latest"
     }
 }
