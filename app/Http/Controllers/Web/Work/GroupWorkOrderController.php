@@ -45,21 +45,24 @@ class GroupWorkOrderController extends Controller
                     'category'          => $workOrder->category->display_name,
                     'activity'          => $workOrder->activity,
                     'status'            => $workOrder->status,
-                    'publish_time'      => $workOrder->format('Y-m-d H:i:s'),
-                    'publish_timestamp' => $workOrder->getTimestamp(),
-                    'update_time'       => $workOrder->format('Y-m-d H:i:s'),
-                    'update_timestamp'  => $workOrder->getTimestamp(),
+                    'publish_time'      => $workOrder->created_at->format('Y-m-d H:i:s'),
+                    'publish_timestamp' => $workOrder->created_at->getTimestamp(),
+                    'update_time'       => $workOrder->updated_at->format('Y-m-d H:i:s'),
+                    'update_timestamp'  => $workOrder->updated_at->getTimestamp(),
+                    'show_url'          => route('host.work.work-order.show', $workOrder->id)
                 ];
             }
 
             return response()->json([
                 'body' => [
-                    'list'      => $data,
-                    'paginator' => [
-                        'current'  => $workOrders->currentPage(),
-                        'total'    => $workOrders->total(),
-                        'count'    => $workOrders->count(),
-                        'per_page' => $workOrders->perPage(),
+                    'list'       => $data,
+                    'pagination' => [
+                        'current'       => $workOrders->currentPage(),
+                        'total'         => $workOrders->total(),
+                        'count'         => $workOrders->count(),
+                        'per_page'      => $workOrders->perPage(),
+                        'last_page'     => $workOrders->lastPage(),
+                        'has_more_page' => $workOrders->hasMorePages()
                     ],
                 ],
             ]);

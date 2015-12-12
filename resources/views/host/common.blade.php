@@ -7,7 +7,7 @@
     <meta name="keywords" content="">
     <meta name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <title>Hello Amaze UI</title>
+    <title>WorkOrderManagement</title>
 
     <!-- Set render engine for 360 browser -->
     <meta name="renderer" content="webkit">
@@ -47,7 +47,7 @@
                     </ul>
                 </li>
                 @if(isset($enableGroup))
-                    <li class="am-active"><a href="javascript:void(0);">{{ $enableGroup->display_name }}</a></li>
+                    <li class="am-active"><a href="{{ route('host.work.group.show', $enableGroup->id) }}">{{ $enableGroup->display_name }}</a></li>
                 @endif
             </ul>
 
@@ -77,6 +77,6 @@
 </div>
 <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
 <script src="/assets/dep/amazeui/dist/js/amazeui.min.js"></script>
-<script src="/assets/dep/mustache/mustache.min.js"></script>
+<script src="/assets/dep/vue/dist/vue.min.js"></script>
 </body>
 </html>
