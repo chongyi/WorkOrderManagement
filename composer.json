@@ -1,7 +1,7 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "chongyi/work-order-management",
+    "description": "工单管理工具，小团队沟通工具。是作者平日的 laravel 框架研究中诞生的程序。该工具可用于团队之间的通知、BUG 报告、工作日报等等。",
+    "keywords": ["work order", "laravel", "team management"],
     "license": "MIT",
     "type": "project",
     "require": {
