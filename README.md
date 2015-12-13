@@ -16,4 +16,12 @@
 
 安装完毕，编辑 `.env` 文件，编辑数据库相关配置，保存。
 
-在 `public` 目录下执行 `php -S 127.0.0.1:998 ../server.php` 后，访问 `127.0.0.1:998` 即可看到登录页面。
+最后在 `public` 目录下执行 `php -S 127.0.0.1:998 ../server.php` 后，访问 `127.0.0.1:998` 即可看到登录页面。
+
+## 前端组件
+
+你需要安装 `npm` 和 `bower`，并下载 `ckeditor` 编辑器。
+
+下载的 `ckeditor` 编辑器解压后放至 `public/assets/addons/ckeditor` 目录下。
+
+在 `public` 下执行 `bower install` 安装前端组件。
