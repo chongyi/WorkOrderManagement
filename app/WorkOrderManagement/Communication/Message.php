@@ -15,7 +15,7 @@ class Message extends Model
      */
     public function sender()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     /**
@@ -46,6 +46,24 @@ class Message extends Model
     public function toRead()
     {
         $this->read = true;
+        $this->save();
+    }
+
+    /**
+     * 将该消息发送至
+     *
+     * @param User      $user
+     * @param bool|true $system
+     */
+    public function sendTo(User $user, $system = true)
+    {
+        $this->receiver()->associate($user);
+
+        if ($system) {
+            $this->system_message = true;
+            $this->sender()->associate(\Auth::user());
+        }
+
         $this->save();
     }
 }

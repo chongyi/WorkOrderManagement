@@ -20,7 +20,7 @@ class GroupController extends Controller
      */
     public function index(Request $request)
     {
-        $groups = new Group();
+        $groups = with(new Group())->newQuery();
 
         if ($keywords = $request->query('keywords')) {
             $groups->where('display_name', 'like', "%$keywords%");
@@ -29,9 +29,9 @@ class GroupController extends Controller
         if ($user = $request->query('user')) {
             $groups->where(function ($query) use ($user) {
                 $query->where('user_id', $user)
-                    ->orWhereHas('creator', function ($query) use ($user) {
-                        $query->where('email', 'like', "%$user%")->orWhere('name', 'like', "%$user%");
-                    });
+                      ->orWhereHas('creator', function ($query) use ($user) {
+                          $query->where('email', 'like', "%$user%")->orWhere('name', 'like', "%$user%");
+                      });
             });
         }
 
@@ -47,21 +47,27 @@ class GroupController extends Controller
                     'user_id'          => $group->user_id,
                     'user'             => $group->creator->name,
                     'user_email'       => $group->creator->email,
-                    'create_time'      => $group->format('Y-m-d H:i:s'),
-                    'create_timestamp' => $group->getTimestamp(),
-                    'update_time'      => $group->format('Y-m-d H:i:s'),
-                    'update_timestamp' => $group->getTimestamp(),
+                    'create_time'      => $group->created_at->format('Y-m-d H:i:s'),
+                    'create_timestamp' => $group->created_at->getTimestamp(),
+                    'update_time'      => $group->updated_at->format('Y-m-d H:i:s'),
+                    'update_timestamp' => $group->updated_at->getTimestamp(),
+                    'show_url'         => route('host.work.group.show', $group->id),
+                    'is_involved'      => $group->participants()->whereId(\Auth::id())->count() ? true : false
                 ];
             }
 
             return response()->json([
-                'list'      => $data,
-                'paginator' => [
-                    'current'  => $groups->currentPage(),
-                    'total'    => $groups->total(),
-                    'count'    => $groups->count(),
-                    'per_page' => $groups->perPage(),
-                ],
+                'body' => [
+                    'list'       => $data,
+                    'pagination' => [
+                        'current'       => $groups->currentPage(),
+                        'total'         => $groups->total(),
+                        'count'         => $groups->count(),
+                        'per_page'      => $groups->perPage(),
+                        'last_page'     => $groups->lastPage(),
+                        'has_more_page' => $groups->hasMorePages()
+                    ],
+                ]
             ]);
         } else {
             return view('host.work.group.index')->with('groups', $groups);
@@ -95,13 +101,14 @@ class GroupController extends Controller
             return redirect()->back()->withErrors($validator->errors());
         }
 
-        return \DB::transaction(function() use ($request) {
-            $group = new Group();
+        return \DB::transaction(function () use ($request) {
+            $group               = new Group();
             $group->display_name = $request->input('display_name');
-            $group->description = $request->input('description', '');
+            $group->description  = $request->input('description', '');
+            $group->creator()->associate(\Auth::user());
 
             $group->save();
-            $group->creator()->associate(\Auth::user());
+
             return redirect()->route('host.work.group.show', [$group->id])->with('create-success', 'group');
         });
     }
@@ -148,9 +155,9 @@ class GroupController extends Controller
             return redirect()->back()->withErrors($validator->errors());
         }
 
-        $group = Group::findOrFail($id);
+        $group               = Group::findOrFail($id);
         $group->display_name = $request->input('display_name');
-        $group->description = $request->input('description', '');
+        $group->description  = $request->input('description', '');
 
         $group->save();
 

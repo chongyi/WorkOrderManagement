@@ -19,11 +19,23 @@ Route::group(['middleware' => 'auth', 'namespace' => 'Web'], function () {
         ]
     ]);
 
+    Route::resource('work-order.messages', 'Work\WorkOrderMessageController', [
+        'names' => [
+            'index' => 'host.work.work-order.message.index'
+        ],
+        'only'  => ['index', 'store']
+    ]);
+
     Route::resource('work-order', 'Work\WorkOrderController', [
         'names' => [
             'index' => 'host.work.work-order.index',
             'show'  => 'host.work.work-order.show',
         ]
+    ]);
+
+    Route::controller('my-watchlist', 'Communication\MyWatchlistController', [
+        'putWorkOrder' => 'host.communication.my-watchlist.work-order',
+        'putGroup'     => 'host.communication.my-watchlist.group'
     ]);
 
     Route::resource('group', 'Work\GroupController', [
@@ -35,7 +47,22 @@ Route::group(['middleware' => 'auth', 'namespace' => 'Web'], function () {
             'show'   => 'host.work.group.show',
         ],
     ]);
+
+    Route::get('message/status',
+        ['as' => 'host.communication.message.status', 'uses' => 'Communication\MessageController@status']);
+    Route::resource('message', 'Communication\MessageController', [
+        'names' => [
+            'index' => 'host.communication.message.index'
+        ]
+    ]);
 });
+
+Route::get('route/{routeName}/url', [
+    'as'   => 'host.resource-uri.getter',
+    'uses' => function (\Illuminate\Http\Request $request, $routeName) {
+        return call_user_func_array('route', [$routeName, $request->query->all()]);
+    }
+])->where('routeName', '[-a-zA-Z0-9]+(\.[-a-zA-Z0-9]+)*');
 
 Route::controller('/', 'Web\HostController',
     [
