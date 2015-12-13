@@ -85,9 +85,10 @@
                                 class="am-badge am-badge-warning am-round sf-float-badge" v-if="message.unread > 0"
                                 v-text="message.unread"></span></button>
                     <ul class="am-dropdown-content">
-                        <li><a href="#">我的消息 <span class="am-badge am-badge-warning am-round" v-if="message.unread > 0"
-                                                   v-text="message.unread"></span></a></li>
-                        <li><a href="#">我的工单</a></li>
+                        <li><a href="{{ route('host.communication.message.index') }}">我的消息 <span
+                                        class="am-badge am-badge-warning am-round" v-if="message.unread > 0"
+                                        v-text="message.unread"></span></a></li>
+                        <li><a href="{{ route('host.work.my-work-order.index') }}">我的工单</a></li>
                         <li class="am-divider"></li>
                         <li><a href="{{ route('host.logout') }}">注销</a></li>
                     </ul>

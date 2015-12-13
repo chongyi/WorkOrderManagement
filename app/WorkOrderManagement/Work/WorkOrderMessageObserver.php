@@ -56,6 +56,13 @@ class WorkOrderMessageObserver
                     $message->sendTo($participant);
                 }
             }
+
+            $history = new WorkOrderHistory();
+            $history->event_id = WorkOrderHistory::EVENT_NEW_WORK_ORDER_MESSAGE;
+            $history->remark = json_encode(['message_id' => $message->id]);
+            $history->user()->associate(\Auth::user());
+            $history->workOrder()->associate($workOrder);
+            $history->save();
         }
     }
 }

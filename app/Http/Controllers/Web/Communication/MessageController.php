@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web\Communication;
 
+use App\Http\Controllers\Web\BaseDataBootstrap;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -9,6 +10,8 @@ use App\Http\Controllers\Controller;
 
 class MessageController extends Controller
 {
+    use BaseDataBootstrap;
+
     /**
      * Display a listing of the resource.
      *
@@ -18,8 +21,12 @@ class MessageController extends Controller
     {
         $messages = \Auth::user()->myReceivedMessages();
 
-        if ($unread = $request->query('unread')) {
-            $messages->unread();
+        if ($status = $request->query('status')) {
+            if ($status == 1) {
+                $messages->unread();
+            } else {
+                $messages->read();
+            }
         }
 
         $messages = $messages->orderBy('created_at', 'desc')->paginate(8);
@@ -56,7 +63,7 @@ class MessageController extends Controller
             ]);
         }
 
-        return view();
+        return view('host.communication.message.index');
     }
 
     public function status(Request $request)
@@ -126,7 +133,17 @@ class MessageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $message = \Auth::user()->myReceivedMessages()->whereId($id)->firstOrFail();
+
+        $message->read = $request->input('status');
+
+        $message->save();
+
+        if ($request->ajax()) {
+            return response()->json(['body' => 'success']);
+        }
+
+        return redirect()->back();
     }
 
     /**

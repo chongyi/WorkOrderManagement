@@ -41,6 +41,18 @@ class Message extends Model
     }
 
     /**
+     * 获取已读列表
+     *
+     * @param Builder $builder
+     *
+     * @return $this
+     */
+    public function scopeRead(Builder $builder)
+    {
+        return $builder->where('read', true);
+    }
+
+    /**
      * 修改当前状态为已读
      */
     public function toRead()

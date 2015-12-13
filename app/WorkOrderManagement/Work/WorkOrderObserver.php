@@ -40,7 +40,7 @@ class WorkOrderObserver
             $url = \get_uri_path(route('host.work.work-order.show', $model->id));
 
             $message          = new Message();
-            $message->title   = '#' . $model->id . ' 有新的动态';
+            $message->title   = '工单 #' . $model->id . ' 有新的动态';
             $message->content = view('host.communication.message.template.new-work-order-dynamic',
                 [
                     'workOrder' => $model,
@@ -49,5 +49,12 @@ class WorkOrderObserver
 
             $message->sendTo($participant);
         }
+
+        // 创建历史
+        $history = new WorkOrderHistory();
+        $history->event_id = WorkOrderHistory::EVENT_WORK_ORDER_CREATE;
+        $history->workOrder()->associate($model);
+        $history->user()->associate(\Auth::user());
+        $history->save();
     }
 }

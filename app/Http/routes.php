@@ -28,8 +28,15 @@ Route::group(['middleware' => 'auth', 'namespace' => 'Web'], function () {
 
     Route::resource('work-order', 'Work\WorkOrderController', [
         'names' => [
-            'index' => 'host.work.work-order.index',
-            'show'  => 'host.work.work-order.show',
+            'index'  => 'host.work.work-order.index',
+            'create' => 'host.work.work-order.create',
+            'show'   => 'host.work.work-order.show',
+        ]
+    ]);
+
+    Route::resource('my-work-order', 'Work\MyWorkOrderController', [
+        'names' => [
+            'index' => 'host.work.my-work-order.index'
         ]
     ]);
 
@@ -52,7 +59,8 @@ Route::group(['middleware' => 'auth', 'namespace' => 'Web'], function () {
         ['as' => 'host.communication.message.status', 'uses' => 'Communication\MessageController@status']);
     Route::resource('message', 'Communication\MessageController', [
         'names' => [
-            'index' => 'host.communication.message.index'
+            'index'  => 'host.communication.message.index',
+            'update' => 'host.communication.message.update'
         ]
     ]);
 });
