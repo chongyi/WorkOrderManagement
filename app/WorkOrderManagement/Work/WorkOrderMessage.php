@@ -7,6 +7,8 @@ use App\WorkOrderManagement\User;
 
 class WorkOrderMessage extends Model
 {
+    protected $touches = ['workOrder'];
+
     /**
      * 消息发布人
      *

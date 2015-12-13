@@ -8,7 +8,8 @@
 
 return [
     'create-success' => [
-        'group'      => '工作组创建成功',
-        'work-order' => '工单创建成功',
+        'group'              => '工作组创建成功',
+        'work-order'         => '工单创建成功',
+        'work-order-message' => '发布工单消息成功'
     ]
 ];

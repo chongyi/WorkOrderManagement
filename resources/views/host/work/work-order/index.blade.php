@@ -3,8 +3,8 @@
 @section('head')
     <script>
         var PAGE_CONFIG = {
-            workOrderIndex: '{{ route('host.work.group.work-order.index', [$enableGroup->id]) }}',
-            workOrderCreate: '{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}'
+            workOrderIndex: '{{ route(isset($myOrders) ? 'host.work.my-work-order.index' : 'host.work.work-order.index') }}',
+            workOrderCreate: '{{ route('host.work.work-order.create') }}'
         }
     </script>
 @stop
@@ -23,7 +23,7 @@
                                 刷新列表
                             </button>
                             <a class="am-btn am-btn-success"
-                               href="{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}">新建工单</a>
+                               href="{{ route('host.work.work-order.create') }}">新建工单</a>
                         </div>
                     </div>
                 </div>
@@ -58,13 +58,12 @@
                                             v-on:click="involve" data-target="@{{ item.id }}">关注
                                     </button>
                                 </template>
-
                             </td>
                         </tr>
                     </template>
                     <template v-else>
                         <tr>
-                            <td colspan="7">暂无工单</td>
+                            <td colspan="6">暂无工单</td>
                         </tr>
                     </template>
                     </tbody>
@@ -140,7 +139,7 @@
                                 data: {
                                     _token: COMMON_METHOD.requestTokenGetter()
                                 },
-                                success: function() {
+                                success: function () {
                                     vueComponment.refresh(null, vueComponment.pagination.current);
                                 }
                             });

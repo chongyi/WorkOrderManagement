@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Web\Work;
 
 use App\Http\Controllers\Web\BaseDataBootstrap;
+use App\WorkOrderManagement\Work\Category;
+use App\WorkOrderManagement\Work\Group;
 use App\WorkOrderManagement\Work\WorkOrder;
 use Illuminate\Http\Request;
 
@@ -30,6 +32,10 @@ class WorkOrderController extends Controller
             $workOrders->where('status', $status);
         }
 
+        if ($user = $request->query('user_id')) {
+            $workOrders->where('user_id', $user);
+        }
+
         $workOrders = $workOrders->display()->orderBy('sort', 'desc')->orderBy('created_at', 'desc')->paginate(8);
 
         if ($request->ajax()) {
@@ -47,21 +53,25 @@ class WorkOrderController extends Controller
                     'category'          => $workOrder->category->display_name,
                     'activity'          => $workOrder->activity,
                     'status'            => $workOrder->status,
-                    'publish_time'      => $workOrder->format('Y-m-d H:i:s'),
-                    'publish_timestamp' => $workOrder->getTimestamp(),
-                    'update_time'       => $workOrder->format('Y-m-d H:i:s'),
-                    'update_timestamp'  => $workOrder->getTimestamp()
+                    'publish_time'      => $workOrder->created_at->format('Y-m-d H:i:s'),
+                    'publish_timestamp' => $workOrder->created_at->getTimestamp(),
+                    'update_time'       => $workOrder->updated_at->format('Y-m-d H:i:s'),
+                    'update_timestamp'  => $workOrder->updated_at->getTimestamp(),
+                    'show_url'          => route('host.work.work-order.show', $workOrder->id),
+                    'is_involved'       => $workOrder->participants()->whereId(\Auth::id())->count() ? true : false
                 ];
             }
 
             return response()->json([
                 'body' => [
-                    'list'      => $data,
-                    'paginator' => [
-                        'current'  => $workOrders->currentPage(),
-                        'total'    => $workOrders->total(),
-                        'count'    => $workOrders->count(),
-                        'per_page' => $workOrders->perPage(),
+                    'list'       => $data,
+                    'pagination' => [
+                        'current'       => $workOrders->currentPage(),
+                        'total'         => $workOrders->total(),
+                        'count'         => $workOrders->count(),
+                        'per_page'      => $workOrders->perPage(),
+                        'last_page'     => $workOrders->lastPage(),
+                        'has_more_page' => $workOrders->hasMorePages()
                     ],
                 ],
             ]);
@@ -77,7 +87,9 @@ class WorkOrderController extends Controller
      */
     public function create()
     {
-        //
+        return view('host.work.work-order.create')
+            ->with('groups', Group::enable()->get())
+            ->with('categories', Category::all());
     }
 
     /**
@@ -89,7 +101,36 @@ class WorkOrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = \Validator::make($request->all(), [
+            'subject'     => 'required',
+            'sort'        => 'required|numeric|min:0|max:5',
+            'content'     => 'required',
+            'category_id' => 'required|exists:categories,id',
+            'group_id'    => 'required|exists:groups,id'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator->errors());
+        }
+
+        return \DB::transaction(function () use ($request) {
+            $group     = Group::findOrFail($request->input('group_id'));
+            $category  = Category::findOrFail($request->input('category_id'));
+            $workOrder = new WorkOrder();
+
+            $workOrder->subject = $request->input('subject');
+            $workOrder->sort    = $request->input('sort');
+
+            $workOrder->category()->associate($category);
+            $workOrder->group()->associate($group);
+            $workOrder->publisher()->associate(\Auth::user());
+
+            $workOrder->save();
+
+            return redirect()
+                ->route('host.work.work-order.show', $workOrder->id)
+                ->with('create-success', 'work-order');
+        });
     }
 
     /**
@@ -99,9 +140,13 @@ class WorkOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $workOrder = WorkOrder::findOrFail($id);
+
+        if ($request->ajax()) {
+            return response()->json(['body' => $workOrder->toArray()]);
+        }
 
         return view('host.work.work-order.show')->with('enableGroup', $workOrder->group)->with('workOrder', $workOrder);
     }
@@ -128,7 +173,16 @@ class WorkOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $workOrder = WorkOrder::findOrFail($id);
+
+        if ($workOrder->status != 0 && $workOrder->status != 3) {
+            if (in_array($status = $request->input('status', -1), [0, 1, 2, 3])) {
+                $workOrder->status = $status;
+                $workOrder->save();
+            }
+        }
+
+        return response()->json(['body' => 'success']);
     }
 
     /**
