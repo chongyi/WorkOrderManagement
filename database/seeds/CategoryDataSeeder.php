@@ -15,16 +15,20 @@ class CategoryDataSeeder extends Seeder
 
         $categories = [
             [
-                'display_name' => '新增功能',
-                'description'  => '新增加了一些项目功能'
+                'display_name' => 'BUG 报告',
+                'description'  => '发现测试中遇到一些执行异常，需要解决'
             ],
             [
                 'display_name' => '修改功能',
                 'description'  => '需求变更，需要修改模块功能'
             ],
             [
-                'display_name' => 'BUG 报告',
-                'description'  => '发现测试中遇到一些执行异常，需要解决'
+                'display_name' => '新增功能',
+                'description'  => '新增加了一些项目功能'
+            ],
+            [
+                'display_name' => '工作任务',
+                'description'  => '工作任务发布，日常报告等'
             ]
         ];
 

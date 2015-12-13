@@ -73,7 +73,7 @@ class Message extends Model
 
         if ($system) {
             $this->system_message = true;
-            $this->sender()->associate(\Auth::user());
+            $this->sender()->associate(0);
         }
 
         $this->save();

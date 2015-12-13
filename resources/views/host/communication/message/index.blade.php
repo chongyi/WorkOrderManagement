@@ -163,7 +163,7 @@
                     this.$set('modalData.content', item.content);
 
                     var modal = $('#message-content-show');
-                    modal.on('closed.modal.amui', function() {
+                    modal.on('opened.modal.amui', function() {
                         COMMON_METHOD.resourceUriGetter('host.communication.message.update', {id: item.id}, function(url) {
                             $.ajax({
                                 url: url,

@@ -113,7 +113,7 @@ class WorkOrderController extends Controller
             return redirect()->back()->withErrors($validator->errors());
         }
 
-        return \DB::transaction(function () use ($request, $groupId) {
+        return \DB::transaction(function () use ($request) {
             $group     = Group::findOrFail($request->input('group_id'));
             $category  = Category::findOrFail($request->input('category_id'));
             $workOrder = new WorkOrder();
@@ -140,9 +140,13 @@ class WorkOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $workOrder = WorkOrder::findOrFail($id);
+
+        if ($request->ajax()) {
+            return response()->json(['body' => $workOrder->toArray()]);
+        }
 
         return view('host.work.work-order.show')->with('enableGroup', $workOrder->group)->with('workOrder', $workOrder);
     }
@@ -169,7 +173,16 @@ class WorkOrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $workOrder = WorkOrder::findOrFail($id);
+
+        if ($workOrder->status != 0 && $workOrder->status != 3) {
+            if (in_array($status = $request->input('status', -1), [0, 1, 2, 3])) {
+                $workOrder->status = $status;
+                $workOrder->save();
+            }
+        }
+
+        return response()->json(['body' => 'success']);
     }
 
     /**

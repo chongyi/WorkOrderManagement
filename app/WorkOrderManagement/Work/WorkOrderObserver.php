@@ -37,10 +37,14 @@ class WorkOrderObserver
         $user->involvements(User::INVOLVED_WORK_ORDER)->attach($model->id);
 
         foreach ($model->group->participants as $participant) {
+            if ($participant->id == \Auth::id()) {
+                continue;
+            }
+
             $url = \get_uri_path(route('host.work.work-order.show', $model->id));
 
             $message          = new Message();
-            $message->title   = '工单 #' . $model->id . ' 有新的动态';
+            $message->title   = '一个新的工单 #' . $model->id . ' 发布了';
             $message->content = view('host.communication.message.template.new-work-order-dynamic',
                 [
                     'workOrder' => $model,
@@ -51,9 +55,89 @@ class WorkOrderObserver
         }
 
         // 创建历史
-        $history = new WorkOrderHistory();
+        $history           = new WorkOrderHistory();
         $history->event_id = WorkOrderHistory::EVENT_WORK_ORDER_CREATE;
         $history->workOrder()->associate($model);
+        $history->user()->associate(\Auth::user());
+        $history->save();
+    }
+
+    public function updated(WorkOrder $workOrder)
+    {
+        $sendedUsers = [];
+
+        $messageData = [];
+        switch ($workOrder->status) {
+            case 0:
+                $messageData = [
+                    'title' => '工单 #' . $workOrder->id . ' 已关闭',
+                    'template' => 'host.communication.message.template.closed'
+                ];
+                break;
+            case 2:
+                $messageData = [
+                    'title' => '工单 #' . $workOrder->id . ' 已被受理',
+                    'template' => 'host.communication.message.template.accept'
+                ];
+                break;
+            case 3:
+                $messageData = [
+                    'title' => '工单 #' . $workOrder->id . ' 已被标记为解决',
+                    'template' => 'host.communication.message.template.solved'
+                ];
+                break;
+        }
+
+        foreach ($workOrder->participants as $participant) {
+            if ($participant->id == \Auth::id()) {
+                continue;
+            }
+
+            $url = \get_uri_path(route('host.work.work-order.show', $workOrder->id));
+
+            $message          = new Message();
+            $message->title   = $messageData['title'];
+            $message->content = view($messageData['template'],
+                [
+                    'workOrder' => $workOrder,
+                    'url'       => $url
+                ]);
+
+            $message->sendTo($participant);
+
+            // 当工单解决或关闭则取消关注
+            if ($workOrder->status == 0 || $workOrder->status == 3) {
+                $workOrder->participants()->detach($participant->id);
+            }
+
+            $sendedUsers[] = $participant->id;
+        }
+
+        foreach ($workOrder->group->participants as $participant) {
+            if ($participant->id == \Auth::id()) {
+                continue;
+            }
+
+            if (!in_array($participant->id, $sendedUsers)) {
+                $url = \get_uri_path(route('host.work.work-order.show', $workOrder->id));
+
+                $message          = new Message();
+                $message->title   = $messageData['title'];
+                $message->content = view($messageData['template'],
+                    [
+                        'workOrder' => $workOrder,
+                        'url'       => $url
+                    ]);
+
+                $message->sendTo($participant);
+            }
+        }
+
+        // 创建历史
+        $history           = new WorkOrderHistory();
+        $history->event_id = WorkOrderHistory::EVENT_WORK_ORDER_STATUS_CHANGE;
+        $history->remark   = json_encode(['status' => $workOrder->status]);
+        $history->workOrder()->associate($workOrder);
         $history->user()->associate(\Auth::user());
         $history->save();
     }

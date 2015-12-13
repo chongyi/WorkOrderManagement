@@ -32,7 +32,9 @@
                     <tr>
                         <th>工单号</th>
                         <th>工单标题</th>
+                        <th>分类</th>
                         <th>工单发布人</th>
+                        <th>状态</th>
                         <th>工单发布日期</th>
                         <th>操作</th>
                     </tr>
@@ -42,22 +44,27 @@
                         <tr v-for="item in list">
                             <td>@{{ item.id }}</td>
                             <td><a v-bind:href="item.show_url">@{{ item.subject }}</a></td>
+                            <td>@{{ item.category }}</td>
                             <td>@{{ item.user }}</td>
+                            <td>@{{ item.status | statusConvert }}</td>
                             <td>@{{ item.publish_time }}</td>
                             <td>
                                 <a class="am-btn am-btn-xs am-btn-default" v-bind:href="item.show_url">查看</a>
-                                <button class="am-btn am-btn-xs am-btn-success" v-if="item.is_involved == true"
-                                        v-on:click="off_involve" data-target="@{{ item.id }}">取消关注
-                                </button>
-                                <button class="am-btn am-btn-xs am-btn-primary" v-else="item.is_involved"
-                                        v-on:click="involve" data-target="@{{ item.id }}">关注
-                                </button>
+                                <template v-if="item.status != 0 && item.status != 3">
+                                    <button class="am-btn am-btn-xs am-btn-success" v-if="item.is_involved == true"
+                                            v-on:click="off_involve" data-target="@{{ item.id }}">取消关注
+                                    </button>
+                                    <button class="am-btn am-btn-xs am-btn-primary" v-else="item.is_involved"
+                                            v-on:click="involve" data-target="@{{ item.id }}">关注
+                                    </button>
+                                </template>
+
                             </td>
                         </tr>
                     </template>
                     <template v-else>
                         <tr>
-                            <td colspan="5">暂无工单</td>
+                            <td colspan="7">暂无工单</td>
                         </tr>
                     </template>
                     </tbody>
@@ -85,6 +92,9 @@
     </div>
     <script>
         $(document).ready(function () {
+            Vue.filter('statusConvert', function (value) {
+                return ['已关闭', '待受理', '已受理', '已解决'][value];
+            });
             var vueComponment = new Vue({
                 el: '#work-order-list',
                 ready: function (event) {
