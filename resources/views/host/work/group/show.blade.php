@@ -168,7 +168,7 @@
                     off_involve: function (event) {
                         this.involve(event, 'delete');
                     },
-                    group_involve: function(method) {
+                    group_involve: function(event, method) {
                         if (!method) {
                             method = 'put';
                         }
@@ -187,8 +187,8 @@
                             });
                         });
                     },
-                    group_off_involve: function() {
-                        this.group_involve('delete');
+                    group_off_involve: function(event) {
+                        this.group_involve(event, 'delete');
                     }
                 }
             });
