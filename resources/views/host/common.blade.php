@@ -41,7 +41,7 @@
 <header class="am-topbar" id="header-component">
     <div class="am-container">
         <h1 class="am-topbar-brand">
-            <a href="#">WorkOrder Management</a>
+            <a href="{{ route('host.index') }}">WorkOrder Management</a>
         </h1>
 
         <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
