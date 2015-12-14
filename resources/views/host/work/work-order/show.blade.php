@@ -107,7 +107,6 @@
                 ready: function () {
                     var editor = CKEDITOR.replace('work-order-message-content');
 
-                    this.workOrder();
                     this.$set('editor', editor);
                     this.refresh();
                 },
@@ -140,6 +139,8 @@
                         }
                     },
                     refresh: function () {
+                        this.workOrder();
+
                         $.ajax({
                             url: PAGE_CONFIG.workOrderMessageIndex,
                             dataType: 'json',
@@ -147,8 +148,6 @@
                                 vueComponent.$set('list', response.body.list);
                             }
                         });
-
-                        this.workOrder();
                     },
                     pushNewMessage: function () {
                         var content = this.editor.getData();
