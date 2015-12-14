@@ -79,7 +79,6 @@
                     </section>
                 </div>
                 <div class="am-panel-footer">
-                    @if($workOrder->status == 1 || $workOrder->status == 2)
                     <form class="am-form" v-if="status == 1 || status == 2">
                         <div class="am-form-group">
                             <label>发布工单消息</label>
@@ -88,13 +87,8 @@
                         <button type="button" class="am-btn am-btn-success" v-on:click="pushNewMessage">发布</button>
                     </form>
                     <div class="am-alert am-alert-secondary" v-else>
-                        <p>该工单已终结</p>
+                        <p>当前工单已终结</p>
                     </div>
-                    @else
-                    <div class="am-alert am-alert-secondary">
-                        <p>该工单已终结</p>
-                    </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -107,6 +101,7 @@
                 ready: function () {
                     var editor = CKEDITOR.replace('work-order-message-content');
 
+                    this.workOrder();
                     this.$set('editor', editor);
                     this.refresh();
                 },
@@ -139,8 +134,6 @@
                         }
                     },
                     refresh: function () {
-                        this.workOrder();
-
                         $.ajax({
                             url: PAGE_CONFIG.workOrderMessageIndex,
                             dataType: 'json',
