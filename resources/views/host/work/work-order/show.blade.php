@@ -79,7 +79,7 @@
                     </section>
                 </div>
                 <div class="am-panel-footer">
-                    <form class="am-form" v-if="status == 1 || status == 2">
+                    <form class="am-form" v-if="data.status == 1 || data.status == 2">
                         <div class="am-form-group">
                             <label>发布工单消息</label>
                             <textarea class="" rows="5" id="work-order-message-content" name="content"></textarea>
