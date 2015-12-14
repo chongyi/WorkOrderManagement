@@ -79,16 +79,20 @@
                     </section>
                 </div>
                 <div class="am-panel-footer">
-                    <form class="am-form" v-if="data.status == 1 || data.status == 2">
-                        <div class="am-form-group">
-                            <label>发布工单消息</label>
-                            <textarea class="" rows="5" id="work-order-message-content" name="content"></textarea>
+                    <template v-if="data.status == 1 || data.status == 2">
+                        <form class="am-form">
+                            <div class="am-form-group">
+                                <label>发布工单消息</label>
+                                <textarea class="" rows="5" id="work-order-message-content" name="content"></textarea>
+                            </div>
+                            <button type="button" class="am-btn am-btn-success" v-on:click="pushNewMessage">发布</button>
+                        </form>
+                    </template>
+                    <template v-else>
+                        <div class="am-alert am-alert-secondary" v-else>
+                            <p>当前工单已终结</p>
                         </div>
-                        <button type="button" class="am-btn am-btn-success" v-on:click="pushNewMessage">发布</button>
-                    </form>
-                    <div class="am-alert am-alert-secondary" v-else>
-                        <p>当前工单已终结</p>
-                    </div>
+                    </template>
                 </div>
             </div>
         </div>
