@@ -187,7 +187,7 @@
                             });
                         });
                     },
-                    group_delete_involve: function() {
+                    group_off_involve: function() {
                         this.group_involve('delete');
                     }
                 }
