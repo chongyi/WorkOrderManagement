@@ -105,7 +105,7 @@
             Vue.filter('statusConvert', function (value) {
                 return ['已关闭', '待受理', '已受理', '已解决'][value];
             });
-            var vueComponment = new Vue({
+            var vueComponent = new Vue({
                 el: '#work-order-list',
                 ready: function (event) {
                     this.refresh(event, 1);
@@ -160,7 +160,7 @@
                                     _token: COMMON_METHOD.requestTokenGetter()
                                 },
                                 success: function() {
-                                    vueComponment.refresh(null, vueComponment.pagination.current);
+                                    vueComponent.refresh(null, vueComponent.pagination.current);
                                 }
                             });
                         });
@@ -182,7 +182,7 @@
                                     _token: COMMON_METHOD.requestTokenGetter()
                                 },
                                 success: function() {
-                                    vueComponment.refresh(null, vueComponment.pagination.current);
+                                    vueComponent.refresh(null, vueComponent.pagination.current);
                                 }
                             });
                         });
