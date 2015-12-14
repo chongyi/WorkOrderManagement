@@ -82,14 +82,14 @@
                     <template v-if="data.status == 1 || data.status == 2">
                         <form class="am-form">
                             <div class="am-form-group">
-                                <label>发布工单消息</label>
-                                <textarea class="" rows="5" id="work-order-message-content" name="content"></textarea>
+                                <label for="work-order-message-content">发布工单消息</label>
+                                <textarea rows="5" id="new-work-order-message-content" name="content"></textarea>
                             </div>
                             <button type="button" class="am-btn am-btn-success" v-on:click="pushNewMessage">发布</button>
                         </form>
                     </template>
                     <template v-else>
-                        <div class="am-alert am-alert-secondary" v-else>
+                        <div class="am-alert am-alert-secondary">
                             <p>当前工单已终结</p>
                         </div>
                     </template>
@@ -103,10 +103,7 @@
             var vueComponent = new Vue({
                 el: '#work-order-panel',
                 ready: function () {
-                    var editor = CKEDITOR.replace('work-order-message-content');
-
                     this.workOrder();
-                    this.$set('editor', editor);
                     this.refresh();
                 },
                 methods: {
@@ -138,11 +135,14 @@
                         }
                     },
                     refresh: function () {
+                        this.workOrder();
                         $.ajax({
                             url: PAGE_CONFIG.workOrderMessageIndex,
                             dataType: 'json',
                             success: function (response) {
                                 vueComponent.$set('list', response.body.list);
+                                var editor = CKEDITOR.replace('new-work-order-message-content');
+                                vueComponent.$set('editor', editor);
                             }
                         });
                     },
