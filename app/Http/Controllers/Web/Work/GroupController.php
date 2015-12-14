@@ -29,9 +29,9 @@ class GroupController extends Controller
         if ($user = $request->query('user')) {
             $groups->where(function ($query) use ($user) {
                 $query->where('user_id', $user)
-                      ->orWhereHas('creator', function ($query) use ($user) {
-                          $query->where('email', 'like', "%$user%")->orWhere('name', 'like', "%$user%");
-                      });
+                    ->orWhereHas('creator', function ($query) use ($user) {
+                        $query->where('email', 'like', "%$user%")->orWhere('name', 'like', "%$user%");
+                    });
             });
         }
 
@@ -52,7 +52,7 @@ class GroupController extends Controller
                     'update_time'      => $group->updated_at->format('Y-m-d H:i:s'),
                     'update_timestamp' => $group->updated_at->getTimestamp(),
                     'show_url'         => route('host.work.group.show', $group->id),
-                    'is_involved'      => $group->participants()->whereId(\Auth::id())->count() ? true : false
+                    'is_involved'      => $group->participants()->whereId(\Auth::id())->count() ? true : false,
                 ];
             }
 
@@ -65,9 +65,9 @@ class GroupController extends Controller
                         'count'         => $groups->count(),
                         'per_page'      => $groups->perPage(),
                         'last_page'     => $groups->lastPage(),
-                        'has_more_page' => $groups->hasMorePages()
+                        'has_more_page' => $groups->hasMorePages(),
                     ],
-                ]
+                ],
             ]);
         } else {
             return view('host.work.group.index')->with('groups', $groups);
@@ -94,7 +94,7 @@ class GroupController extends Controller
     public function store(Request $request)
     {
         $validator = \Validator::make($request->all(), [
-            'display_name' => 'required'
+            'display_name' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -120,9 +120,15 @@ class GroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        return view('host.work.group.show')->with('enableGroup', Group::findOrFail($id));
+        $group = Group::findOrFail($id);
+
+        if ($request->ajax()) {
+            return response()->json(['body' => ['is_involved' => $group->participants()->whereId(\Auth::id())->count() ? true : false]]);
+        }
+
+        return view('host.work.group.show')->with('enableGroup', $group);
     }
 
     /**
@@ -148,7 +154,7 @@ class GroupController extends Controller
     public function update(Request $request, $id)
     {
         $validator = \Validator::make($request->all(), [
-            'display_name' => 'required'
+            'display_name' => 'required',
         ]);
 
         if ($validator->fails()) {

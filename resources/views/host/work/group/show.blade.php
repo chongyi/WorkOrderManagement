@@ -4,7 +4,9 @@
     <script>
         var PAGE_CONFIG = {
             workOrderIndex: '{{ route('host.work.group.work-order.index', [$enableGroup->id]) }}',
-            workOrderCreate: '{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}'
+            workOrderCreate: '{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}',
+            groupShow: '{{ route('host.work.group.show', [$enableGroup->id]) }}',
+            groupId: '{{ $enableGroup->id }}'
         }
     </script>
 @stop
@@ -24,6 +26,14 @@
                             </button>
                             <a class="am-btn am-btn-success"
                                href="{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}">新建工单</a>
+                        </div>
+                        <div class="am-btn-group am-btn-group-sm">
+                            <button class="am-btn am-btn-xs am-btn-success" v-if="group.is_involved == true"
+                                    v-on:click="group_off_involve">取消关注
+                            </button>
+                            <button class="am-btn am-btn-xs am-btn-primary" v-else="group.is_involved"
+                                    v-on:click="group_involve">关注
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -107,6 +117,15 @@
                         }
 
                         var handle = this;
+
+                        $.ajax({
+                            url: PAGE_CONFIG,
+                            dataType: 'json',
+                            success: function(response) {
+                                handle.$set('group', response.body);
+                            }
+                        });
+
                         $.ajax({
                             url: PAGE_CONFIG.workOrderIndex,
                             type: 'get',
@@ -148,6 +167,28 @@
                     },
                     off_involve: function (event) {
                         this.involve(event, 'delete');
+                    },
+                    group_involve: function(method) {
+                        if (!method) {
+                            method = 'put';
+                        }
+
+                        COMMON_METHOD.resourceUriGetter('host.communication.my-watchlist.group', {id: PAGE_CONFIG.groupId}, function (url) {
+                            $.ajax({
+                                url: url,
+                                dataType: 'json',
+                                method: method,
+                                data: {
+                                    _token: COMMON_METHOD.requestTokenGetter()
+                                },
+                                success: function() {
+                                    vueComponment.refresh(null, vueComponment.pagination.current);
+                                }
+                            });
+                        });
+                    },
+                    group_delete_involve: function() {
+                        this.group_involve('delete');
                     }
                 }
             });
