@@ -131,7 +131,7 @@
                     dataType: 'json',
                     method: 'get',
                     success: function (response) {
-                        if (headerComponent.message.unread != response.body) {
+                        if (headerComponent.$get('message.unread') != response.body) {
                             if (window.Notification){
                                 if(Notification.permission ==='granted'){
                                     var notification = new Notification('有新的工单动态',{body:"您有新的工单，或者未读消息发生变化，请留意消息变动！"});
