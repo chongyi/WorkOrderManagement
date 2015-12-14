@@ -131,6 +131,17 @@
                     dataType: 'json',
                     method: 'get',
                     success: function (response) {
+                        if (headerComponent.message.unread != response.body) {
+                            if (window.Notification){
+                                if(Notification.Permission==='granted'){
+                                    var notification = new Notification('有新的工单动态',{body:"您有新的工单，或者未读消息发生变化，请留意消息变动！"});
+                                    notification.show();
+                                }else {
+                                    Notification.requestPermission();
+                                }
+                            }
+                        }
+
                         headerComponent.$set('message.unread', response.body);
                     }
                 });
