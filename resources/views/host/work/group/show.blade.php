@@ -5,7 +5,7 @@
         var PAGE_CONFIG = {
             workOrderIndex: '{{ route('host.work.group.work-order.index', [$enableGroup->id]) }}',
             workOrderCreate: '{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}',
-            groupShow: '{{ route('host.work.group.show', [$enableGroup->id]) }}',
+            groupShow: '{{ route('host.work.group.show', $enableGroup->id) }}',
             groupId: '{{ $enableGroup->id }}'
         }
     </script>
@@ -119,7 +119,7 @@
                         var handle = this;
 
                         $.ajax({
-                            url: PAGE_CONFIG,
+                            url: PAGE_CONFIG.groupShow,
                             dataType: 'json',
                             success: function(response) {
                                 handle.$set('group', response.body);
