@@ -131,17 +131,17 @@
                     dataType: 'json',
                     method: 'get',
                     success: function (response) {
-                        if (headerComponent.$get('message.unread') != response.body) {
-                            if (window.Notification){
-                                if(Notification.permission ==='granted'){
-                                    new Notification('有新的工单动态',{body:"您有新的工单，或者未读消息发生变化，请留意消息变动！"});
-                                }else {
+                        if (headerComponent.$get('message.total') != response.body.total && headerComponent.$get('message').total !== undefined) {
+                            if (window.Notification) {
+                                if (Notification.permission === 'granted') {
+                                    new Notification('有新的工单动态', {body: "您有新的工单，或者未读消息发生变化，请留意消息变动！"});
+                                } else {
                                     Notification.requestPermission();
                                 }
                             }
                         }
 
-                        headerComponent.$set('message.unread', response.body);
+                        headerComponent.$set('message', response.body);
                     }
                 });
             }
