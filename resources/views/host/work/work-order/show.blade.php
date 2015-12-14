@@ -79,7 +79,7 @@
                     </section>
                 </div>
                 <div class="am-panel-footer">
-                    @if($workOrder->status == 0 || $workOrder->status == 3)
+                    @if($workOrder->status == 1 || $workOrder->status == 2)
                     <form class="am-form" v-if="status == 1 || status == 2">
                         <div class="am-form-group">
                             <label>发布工单消息</label>
