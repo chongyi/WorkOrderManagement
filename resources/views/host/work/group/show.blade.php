@@ -155,7 +155,7 @@
                             $.ajax({
                                 url: url,
                                 dataType: 'json',
-                                method: method,
+                                type: method,
                                 data: {
                                     _token: COMMON_METHOD.requestTokenGetter()
                                 },
@@ -177,7 +177,7 @@
                             $.ajax({
                                 url: url,
                                 dataType: 'json',
-                                method: method,
+                                type: method,
                                 data: {
                                     _token: COMMON_METHOD.requestTokenGetter()
                                 },
