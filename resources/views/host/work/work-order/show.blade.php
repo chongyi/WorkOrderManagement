@@ -147,6 +147,8 @@
                                 vueComponent.$set('list', response.body.list);
                             }
                         });
+
+                        this.workOrder();
                     },
                     pushNewMessage: function () {
                         var content = this.editor.getData();
