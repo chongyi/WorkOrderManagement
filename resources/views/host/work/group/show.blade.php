@@ -28,10 +28,10 @@
                                href="{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}">新建工单</a>
                         </div>
                         <div class="am-btn-group am-btn-group-sm">
-                            <button class="am-btn am-btn-xs am-btn-success" v-if="group.is_involved == true"
+                            <button class="am-btn am-btn-xs am-btn-success" v-if="group.is_involved"
                                     v-on:click="group_off_involve">取消关注
                             </button>
-                            <button class="am-btn am-btn-xs am-btn-primary" v-else="group.is_involved"
+                            <button class="am-btn am-btn-xs am-btn-primary" v-else
                                     v-on:click="group_involve">关注
                             </button>
                         </div>
