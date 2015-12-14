@@ -79,13 +79,22 @@
                     </section>
                 </div>
                 <div class="am-panel-footer">
-                    <form class="am-form">
+                    @if($workOrder->status == 0 || $workOrder->status == 3)
+                    <form class="am-form" v-if="status == 1 || status == 2">
                         <div class="am-form-group">
                             <label>发布工单消息</label>
                             <textarea class="" rows="5" id="work-order-message-content" name="content"></textarea>
                         </div>
                         <button type="button" class="am-btn am-btn-success" v-on:click="pushNewMessage">发布</button>
                     </form>
+                    <div class="am-alert am-alert-secondary" v-else>
+                        <p>该工单已终结</p>
+                    </div>
+                    @else
+                    <div class="am-alert am-alert-secondary">
+                        <p>该工单已终结</p>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
