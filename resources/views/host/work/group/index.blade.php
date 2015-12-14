@@ -40,7 +40,7 @@
                             <td>@{{ item.id }}</td>
                             <td><a v-bind:href="item.show_url">@{{ item.display_name }}</a></td>
                             <td>
-                                <a class="am-btn am-btn-xs am-btn-default" v-bind:href="item.show_url">查看</a>
+                                <a class="am-btn am-btn-xs am-btn-default" v-bind:href="item.show_url">工单列表</a>
                                 <button class="am-btn am-btn-xs am-btn-success" v-if="item.is_involved == true"
                                         v-on:click="off_involve" data-target="@{{ item.id }}">取消关注
                                 </button>
