@@ -4,7 +4,9 @@
     <script>
         var PAGE_CONFIG = {
             workOrderIndex: '{{ route('host.work.group.work-order.index', [$enableGroup->id]) }}',
-            workOrderCreate: '{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}'
+            workOrderCreate: '{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}',
+            groupShow: '{{ route('host.work.group.show', $enableGroup->id) }}',
+            groupId: '{{ $enableGroup->id }}'
         }
     </script>
 @stop
@@ -25,24 +27,32 @@
                             <a class="am-btn am-btn-success"
                                href="{{ route('host.work.group.work-order.create', [$enableGroup->id]) }}">新建工单</a>
                         </div>
+                        <div class="am-btn-group am-btn-group-sm">
+                            <button class="am-btn am-btn-xs am-btn-success" v-if="group.is_involved"
+                                    v-on:click="group_off_involve">取消关注
+                            </button>
+                            <button class="am-btn am-btn-xs am-btn-primary" v-else
+                                    v-on:click="group_involve">关注
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <table class="am-table am-table-striped am-table-hover">
                     <thead>
                     <tr>
-                        <th>工单号</th>
-                        <th>工单标题</th>
-                        <th>分类</th>
-                        <th>工单发布人</th>
-                        <th>状态</th>
-                        <th>工单发布日期</th>
-                        <th>操作</th>
+                        <th width="">#</th>
+                        <th width="40%">工单标题</th>
+                        <th width="9%">分类</th>
+                        <th width="7%">发布人</th>
+                        <th width="7%">状态</th>
+                        <th width="17%">工单发布日期</th>
+                        <th width="">操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     <template v-if="list.length > 0">
                         <tr v-for="item in list">
-                            <td>@{{ item.id }}</td>
+                            <td>#@{{ item.id }}</td>
                             <td><a v-bind:href="item.show_url">@{{ item.subject }}</a></td>
                             <td>@{{ item.category }}</td>
                             <td>@{{ item.user }}</td>
@@ -95,7 +105,7 @@
             Vue.filter('statusConvert', function (value) {
                 return ['已关闭', '待受理', '已受理', '已解决'][value];
             });
-            var vueComponment = new Vue({
+            var vueComponent = new Vue({
                 el: '#work-order-list',
                 ready: function (event) {
                     this.refresh(event, 1);
@@ -107,6 +117,15 @@
                         }
 
                         var handle = this;
+
+                        $.ajax({
+                            url: PAGE_CONFIG.groupShow,
+                            dataType: 'json',
+                            success: function(response) {
+                                handle.$set('group', response.body);
+                            }
+                        });
+
                         $.ajax({
                             url: PAGE_CONFIG.workOrderIndex,
                             type: 'get',
@@ -136,18 +155,40 @@
                             $.ajax({
                                 url: url,
                                 dataType: 'json',
-                                method: method,
+                                type: method,
                                 data: {
                                     _token: COMMON_METHOD.requestTokenGetter()
                                 },
                                 success: function() {
-                                    vueComponment.refresh(null, vueComponment.pagination.current);
+                                    vueComponent.refresh(null, vueComponent.pagination.current);
                                 }
                             });
                         });
                     },
                     off_involve: function (event) {
                         this.involve(event, 'delete');
+                    },
+                    group_involve: function(event, method) {
+                        if (!method) {
+                            method = 'put';
+                        }
+
+                        COMMON_METHOD.resourceUriGetter('host.communication.my-watchlist.group', {id: PAGE_CONFIG.groupId}, function (url) {
+                            $.ajax({
+                                url: url,
+                                dataType: 'json',
+                                type: method,
+                                data: {
+                                    _token: COMMON_METHOD.requestTokenGetter()
+                                },
+                                success: function() {
+                                    vueComponent.refresh(null, vueComponent.pagination.current);
+                                }
+                            });
+                        });
+                    },
+                    group_off_involve: function(event) {
+                        this.group_involve(event, 'delete');
                     }
                 }
             });

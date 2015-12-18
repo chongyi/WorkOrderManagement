@@ -43,7 +43,7 @@ class MessageController extends Controller
                 'content'        => $message->content,
                 'read'           => $message->read,
                 'send_time'      => $message->created_at->format('Y-m-d H:i:s'),
-                'send_timestamp' => $message->created_at->getTimestamp()
+                'send_timestamp' => $message->created_at->getTimestamp(),
             ];
         }
 
@@ -57,9 +57,9 @@ class MessageController extends Controller
                         'count'         => $messages->count(),
                         'per_page'      => $messages->perPage(),
                         'last_page'     => $messages->lastPage(),
-                        'has_more_page' => $messages->hasMorePages()
-                    ]
-                ]
+                        'has_more_page' => $messages->hasMorePages(),
+                    ],
+                ],
             ]);
         }
 
@@ -70,11 +70,10 @@ class MessageController extends Controller
     {
         $body = [];
 
-        if ($request->query('unread')) {
-            $body = \Auth::user()->myReceivedMessages()->unread()->count();
-        }
+        $unread = \Auth::user()->myReceivedMessages()->unread()->count();
+        $total  = \Auth::user()->myReceivedMessages()->count();
 
-        return response(['body' => $body]);
+        return response(['body' => ['unread' => $unread, 'total' => $total]]);
     }
 
     /**

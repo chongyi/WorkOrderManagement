@@ -41,7 +41,7 @@
 <header class="am-topbar" id="header-component">
     <div class="am-container">
         <h1 class="am-topbar-brand">
-            <a href="#">WorkOrder Management</a>
+            <a href="{{ route('host.index') }}">WorkOrder Management</a>
         </h1>
 
         <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm am-btn-success am-show-sm-only"
@@ -131,7 +131,17 @@
                     dataType: 'json',
                     method: 'get',
                     success: function (response) {
-                        headerComponent.$set('message.unread', response.body);
+                        if (headerComponent.$get('message.total') != response.body.total && headerComponent.$get('message').total !== undefined) {
+                            if (window.Notification) {
+                                if (Notification.permission === 'granted') {
+                                    new Notification('有新的工单动态', {body: "您有新的工单，或者未读消息发生变化，请留意消息变动！"});
+                                } else {
+                                    Notification.requestPermission();
+                                }
+                            }
+                        }
+
+                        headerComponent.$set('message', response.body);
                     }
                 });
             }

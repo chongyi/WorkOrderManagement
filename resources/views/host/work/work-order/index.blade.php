@@ -30,19 +30,19 @@
                 <table class="am-table am-table-striped am-table-hover">
                     <thead>
                     <tr>
-                        <th>工单号</th>
-                        <th>工单标题</th>
-                        <th>分类</th>
-                        <th>工单发布人</th>
-                        <th>状态</th>
-                        <th>工单发布日期</th>
-                        <th>操作</th>
+                        <th width="">#</th>
+                        <th width="40%">工单标题</th>
+                        <th width="9%">分类</th>
+                        <th width="7%">发布人</th>
+                        <th width="7%">状态</th>
+                        <th width="17%">工单发布日期</th>
+                        <th width="">操作</th>
                     </tr>
                     </thead>
                     <tbody>
                     <template v-if="list.length > 0">
                         <tr v-for="item in list">
-                            <td>@{{ item.id }}</td>
+                            <td>#@{{ item.id }}</td>
                             <td><a v-bind:href="item.show_url">@{{ item.subject }}</a></td>
                             <td>@{{ item.category }}</td>
                             <td>@{{ item.user }}</td>
